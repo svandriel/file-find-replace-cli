@@ -14,7 +14,8 @@
     "verify": "npm run test && npm run lint && npm run clean && npm run build",
     "lint": "eslint \"src/**/*.{ts,json}\"",
     "lint:fix": "eslint \"src/**/*.{ts,json}\" --fix",
-    "version": "npm run verify"
+    "version": "npm run verify",
+    "publish": "npm run verify"
   },
   "keywords": [
     "typescript",
