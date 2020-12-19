@@ -15,7 +15,7 @@
     "lint": "eslint \"src/**/*.{ts,json}\"",
     "lint:fix": "eslint \"src/**/*.{ts,json}\" --fix",
     "version": "npm run verify",
-    "publish": "npm run verify"
+    "prepublish": "npm run verify"
   },
   "keywords": [
     "typescript",
