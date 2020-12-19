@@ -1,3 +1,5 @@
+[![Build status](https://travis-ci.com/svandriel/file-find-replace-cli.svg?branch=master)](https://travis-ci.com/svandriel/file-find-replace-cli)
+
 # file-find-replace-cli
 
 Command-line tool to find and replace text in files.
