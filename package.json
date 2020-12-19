@@ -1,6 +1,6 @@
 {
-  "name": "findreplace-cli",
-  "version": "0.0.1",
+  "name": "file-find-replace-cli",
+  "version": "0.0.0",
   "description": "Command line tool for replacing text in files, using a JSON file containining matches and replacements",
   "main": "dist/index.js",
   "bin": {
@@ -15,12 +15,14 @@
     "lint": "eslint \"src/**/*.{ts,json}\"",
     "lint:fix": "eslint \"src/**/*.{ts,json}\" --fix",
     "version": "npm run verify",
-    "prepublish": "npm run verify"
+    "prepublishOnly": "npm run verify"
   },
   "keywords": [
-    "typescript",
-    "node",
-    "boilerplate"
+    "find",
+    "replace",
+    "files",
+    "cli",
+    "command line"
   ],
   "author": "Sander van Driel <sander.vandriel@gmail.com>",
   "license": "ISC",
