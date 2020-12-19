@@ -43,7 +43,7 @@ Options:
 
 `replace.json` contains the replacement info:
 
-```json
+```jsonc
 [
   {
     "find": "foo",
