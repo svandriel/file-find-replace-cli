@@ -1,6 +1,15 @@
 [
   {
-    "match": "One",
-    "replacement": "HELLO!"
+    "find": "One",
+    "replace": "HELLO!",
+    "ignoreCase": true
+  },
+  {
+    "find": "Mauris",
+    "replace": "Testing one two"
+  },
+  {
+    "find": "four",
+    "replace": "4"
   }
 ]

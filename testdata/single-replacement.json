@@ -1,4 +1,4 @@
 {
-  "match": "two",
-  "replacement": "twee"
+  "find": "two",
+  "replace": "twee"
 }
