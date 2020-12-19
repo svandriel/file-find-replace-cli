@@ -1,10 +1,10 @@
 {
   "name": "file-find-replace-cli",
   "version": "0.0.1-0",
-  "description": "Command line tool for replacing text in files, using a JSON file containining matches and replacements",
+  "description": "Replaces text in files, using a JSON file containing matches and replacements",
   "main": "dist/index.js",
   "bin": {
-    "findreplace": "dist/cli/index.js"
+    "find-replace": "dist/cli/index.js"
   },
   "scripts": {
     "build": "tsc",

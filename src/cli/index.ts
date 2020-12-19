@@ -19,10 +19,7 @@ program
             replacementFile: 'The JSON file containing matches and replacements'
         }
     )
-    .option(
-        '-f, --file [file...]',
-        'Path or glob to a file to replace. Can be used multiple times. If not specified, will read from stdin.'
-    )
+    .option('-f, --file [file...]', 'Path or glob to a file to replace. Can be used multiple times.')
     .option('-v, --verbose', 'Turns on verbose mode')
     .parse(process.argv);
 
