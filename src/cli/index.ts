@@ -6,7 +6,8 @@ import path from 'path';
 
 import { findReplace } from '..';
 
-const pkg = JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', '..', 'package.json')).toString());
+const packageJsonLocation = path.resolve(__dirname, '..', '..', 'package.json');
+const pkg = fs.readJsonSync(packageJsonLocation);
 
 program
     .version(pkg.version)

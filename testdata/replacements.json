@@ -11,5 +11,11 @@
   {
     "find": "four",
     "replace": "4"
+  },
+  {
+    "find": "a",
+    "replace": "(a)",
+    "wholeWord": true,
+    "ignoreCase": true
   }
 ]

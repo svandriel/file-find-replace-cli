@@ -1,13 +1,12 @@
 import chalk from 'chalk';
-import escapeStringRegexp from 'escape-string-regexp';
 import fs from 'fs-extra';
 import globby from 'globby';
-import { computeLineOffsets, findOffset } from './line-offsets';
 
+import { applyReplacement } from './apply-replacement';
 import { mapConcurrently } from './map-concurrently';
-import { parseReplacements, Replacement } from './replacement';
+import { parseReplacements, Replacement, replacementToString } from './replacement';
 
-const DEFAULT_CONCURRENCY = 10;
+const DEFAULT_CONCURRENCY = 1;
 
 export interface FindReplaceOptions {
     files: string[];
@@ -22,11 +21,11 @@ export async function findReplace(opts: FindReplaceOptions): Promise<void> {
         throw new Error('Must specify input files or globs');
     }
 
-    const configJson = await readJson(jsonConfigFile);
+    const configJson = await fs.readJson(jsonConfigFile);
     const config = parseReplacements(configJson);
 
     if (verbose) {
-        const configStr = config.map(item => `  ${chalk.bold(item.find)} => ${chalk.bold(item.replace)}`).join('\n');
+        const configStr = config.map(item => `  ${replacementToString(item)}`).join('\n');
         console.log(`Loaded replacements from ${chalk.green(opts.jsonConfigFile)}:\n${configStr}`);
     }
 
@@ -45,32 +44,27 @@ export async function findReplace(opts: FindReplaceOptions): Promise<void> {
     await mapConcurrently(concurrency, file => findReplaceFile(file, config, verbose), matchedFiles);
 }
 
-async function findReplaceFile(file: string, entries: Replacement[], verbose?: boolean): Promise<void> {
+async function findReplaceFile(file: string, entries: Replacement[], verbose = false): Promise<void> {
     const buffer = await fs.readFile(file, 'utf-8');
     const contents = buffer.toString();
 
-    const lineStartIndices = computeLineOffsets(contents);
-
+    if (verbose) {
+        console.log(`\n${chalk.cyan(file)}:`);
+    }
     const output = entries.reduce(
         (acc, entry) => {
-            const ignoreCaseFlag = entry.ignoreCase ? 'i' : '';
-            const flags = `g${ignoreCaseFlag}`;
-            const regexp = new RegExp(escapeStringRegexp(entry.find), flags);
-            let replaceCount = acc.replaceCount;
-            const result = acc.result.replace(regexp, (match, index) => {
-                if (verbose) {
-                    const position = findOffset(lineStartIndices, index);
-                    console.log(
-                        `At ${chalk.cyan(file)}:${position.lineIndex + 1}:${
-                            position.columnIndex + 1
-                        }: replacing ${chalk.green(match)} with ${chalk.yellow(entry.replace)}`
-                    );
-                }
-                replaceCount += 1;
-                return entry.replace;
-            });
-
-            return { result, replaceCount };
+            const { replaceCount, result } = applyReplacement(
+                {
+                    file,
+                    verbose
+                },
+                entry,
+                acc.result
+            );
+            return {
+                result,
+                replaceCount: acc.replaceCount + replaceCount
+            };
         },
         {
             result: contents,
@@ -80,12 +74,6 @@ async function findReplaceFile(file: string, entries: Replacement[], verbose?: b
 
     await fs.writeFile(file, output.result);
     if (verbose) {
-        console.log(`Found ${chalk.bold(output.replaceCount)} replacements in ${chalk.cyan(file)}`);
+        console.log(`  Total: replaced ${chalk.bold(output.replaceCount)} occurrence(s)`);
     }
-}
-
-async function readJson<T>(file: string): Promise<T> {
-    const buffer = await fs.readFile(file, 'utf-8');
-
-    return JSON.parse(buffer.toString());
 }

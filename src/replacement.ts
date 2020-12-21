@@ -1,7 +1,10 @@
+import chalk from 'chalk';
+
 export interface Replacement {
     find: string;
     replace: string;
     ignoreCase: boolean;
+    wholeWord: boolean;
 }
 
 export type replaces = Replacement[];
@@ -32,10 +35,18 @@ function parseEntry(entry: any): Replacement {
         throw new Error(`Expected 'replace' to be string, found ${typeof entry.find}: ${JSON.stringify(entry)}`);
     }
     const ignoreCase = 'ignoreCase' in entry && entry.ignoreCase === true;
+    const wholeWord = 'wholeWord' in entry && entry.wholeWord === true;
 
     return {
         find: entry.find,
         replace: entry.replace,
-        ignoreCase
+        ignoreCase,
+        wholeWord
     };
+}
+
+export function replacementToString(item: Replacement): string {
+    return `${chalk.bold(item.find)} => ${chalk.bold(item.replace)}${item.wholeWord ? chalk.gray(' [wholeWord]') : ''}${
+        item.ignoreCase ? chalk.gray(' [ignoreCase]') : ''
+    }`;
 }
