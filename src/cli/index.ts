@@ -1,10 +1,11 @@
 #!/usr/bin/env node
-
+import chalk from 'chalk';
 import program from 'commander';
 import fs from 'fs-extra';
 import path from 'path';
 
 import { findReplace } from '..';
+import { findReplaceResultToString } from '../types';
 
 const packageJsonLocation = path.resolve(__dirname, '..', '..', 'package.json');
 const pkg = fs.readJsonSync(packageJsonLocation);
@@ -43,9 +44,14 @@ async function main(): Promise<void> {
 
     const jsonConfigFile = replacementFiles[0];
 
-    await findReplace({
+    const results = await findReplace({
         files,
         jsonConfigFile,
         verbose
     });
+
+    const totalReplaceCount = results.reduce((acc, result) => acc + result.replaceCount, 0);
+
+    console.log(`Replaced ${chalk.bold(totalReplaceCount)} occurrences in total`);
+    console.log(results.map(findReplaceResultToString).join('\n'));
 }

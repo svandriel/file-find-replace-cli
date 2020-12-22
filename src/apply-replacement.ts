@@ -11,14 +11,14 @@ export interface ApplyReplacementOptions {
 
 export function applyReplacement(
     options: ApplyReplacementOptions,
-    entry: Replacement,
+    replacement: Replacement,
     content: string
 ): { result: string; replaceCount: number } {
     const { file, verbose = false } = options;
-    const ignoreCaseFlag = entry.ignoreCase ? 'i' : '';
+    const ignoreCaseFlag = replacement.ignoreCase ? 'i' : '';
     const flags = `g${ignoreCaseFlag}`;
-    const escapedFindText = escapeStringRegexp(entry.find);
-    const regexText = entry.wholeWord ? `\\b${escapedFindText}\\b` : escapedFindText;
+    const escapedFindText = escapeStringRegexp(replacement.find);
+    const regexText = replacement.wholeWord ? `\\b${escapedFindText}\\b` : escapedFindText;
     const regexp = new RegExp(regexText, flags);
     let replaceCount = 0;
     const result = content.replace(regexp, (match, index) => {
@@ -26,17 +26,14 @@ export function applyReplacement(
             const lineOffsets = computeLineOffsets(content);
             const position = findOffset(lineOffsets, index);
             console.log(
-                `  At ${chalk.gray(file)}:${position.lineIndex + 1}:${position.columnIndex + 1}: ${chalk.green(
+                `${chalk.cyan(file)}:${position.lineIndex + 1}:${position.columnIndex + 1}: ${chalk.green(
                     match
-                )} => ${chalk.yellow(entry.replace)}`
+                )} => ${chalk.yellow(replacement.replace)}`
             );
         }
         replaceCount += 1;
-        return entry.replace;
+        return replacement.replace;
     });
-    if (verbose) {
-        console.log(`  -> replaced ${chalk.bold(replaceCount)} occurrence(s) of ${chalk.cyan(entry.find)}`);
-    }
     return {
         replaceCount,
         result

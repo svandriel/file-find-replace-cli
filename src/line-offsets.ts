@@ -1,15 +1,4 @@
-export interface LineOffset {
-    lineNumber: number;
-    startOffset: number;
-    endOffset: number;
-    length: number;
-    line: string;
-}
-
-export interface Position {
-    lineIndex: number;
-    columnIndex: number;
-}
+import { LineOffset, Position } from './types';
 
 const separator = '\n';
 

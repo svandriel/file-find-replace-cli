@@ -2,20 +2,14 @@ import chalk from 'chalk';
 import fs from 'fs-extra';
 import globby from 'globby';
 
-import { applyReplacement } from './apply-replacement';
+import { findReplaceInFile } from './find-replace-in-file';
 import { mapConcurrently } from './map-concurrently';
-import { parseReplacements, Replacement, replacementToString } from './replacement';
+import { parseReplacements, replacementToString } from './replacement';
+import { FindReplaceOptions, FindReplaceResult } from './types';
 
 const DEFAULT_CONCURRENCY = 1;
 
-export interface FindReplaceOptions {
-    files: string[];
-    jsonConfigFile: string;
-    concurrency?: number;
-    verbose?: boolean;
-}
-
-export async function findReplace(opts: FindReplaceOptions): Promise<void> {
+export async function findReplace(opts: FindReplaceOptions): Promise<FindReplaceResult[]> {
     const { files, jsonConfigFile, concurrency = DEFAULT_CONCURRENCY, verbose = false } = opts;
     if (files.length === 0) {
         throw new Error('Must specify input files or globs');
@@ -41,39 +35,5 @@ export async function findReplace(opts: FindReplaceOptions): Promise<void> {
         console.log(matchedFilesStr);
     }
 
-    await mapConcurrently(concurrency, file => findReplaceFile(file, config, verbose), matchedFiles);
-}
-
-async function findReplaceFile(file: string, entries: Replacement[], verbose = false): Promise<void> {
-    const buffer = await fs.readFile(file, 'utf-8');
-    const contents = buffer.toString();
-
-    if (verbose) {
-        console.log(`\n${chalk.cyan(file)}:`);
-    }
-    const output = entries.reduce(
-        (acc, entry) => {
-            const { replaceCount, result } = applyReplacement(
-                {
-                    file,
-                    verbose
-                },
-                entry,
-                acc.result
-            );
-            return {
-                result,
-                replaceCount: acc.replaceCount + replaceCount
-            };
-        },
-        {
-            result: contents,
-            replaceCount: 0
-        }
-    );
-
-    await fs.writeFile(file, output.result);
-    if (verbose) {
-        console.log(`  Total: replaced ${chalk.bold(output.replaceCount)} occurrence(s)`);
-    }
+    return mapConcurrently(concurrency, file => findReplaceInFile(file, config, verbose), matchedFiles);
 }
