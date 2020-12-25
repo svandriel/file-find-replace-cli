@@ -15,7 +15,7 @@ program
     .usage('<replacementFile> [options]')
     .arguments('<replacementFile>')
     .description(
-        'Command line tool for replacing text in files, using a JSON file containining matches and replacements.\n' +
+        'Replaces in files, using a JSON file containing matches and replacements.\n' +
             "The JSON file must contain an object (or array of objects), each containing a 'find' and 'replace' entry",
         {
             replacementFile: 'The JSON file containing matches and replacements'

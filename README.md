@@ -27,7 +27,7 @@ $ file-replace -h
 
 Usage: file-replace <replacementFile> [options]
 
-Command line tool for replacing text in files, using a JSON file containining matches and replacements.
+Command line tool for replacing text in files, using a JSON file containing matches and replacements.
 The JSON file must contain an object (or array of objects), each containing a 'find' and 'replace' entry
 
 Arguments:
@@ -57,4 +57,15 @@ Options:
     "replace": "🦄"
   }
 ]
+```
+
+The file must contain a single replacement object, or an array of replacements.
+
+```jsonc
+{
+  "find": "<something to find>",
+  "replace": "<will be replaced with>",
+  "ignoreCase": false, // optional; false by default
+  "wholeWord": false // optional; false by default
+}
 ```

@@ -15,11 +15,7 @@ export function applyReplacement(
     content: string
 ): { result: string; replaceCount: number } {
     const { file, verbose = false } = options;
-    const ignoreCaseFlag = replacement.ignoreCase ? 'i' : '';
-    const flags = `g${ignoreCaseFlag}`;
-    const escapedFindText = escapeStringRegexp(replacement.find);
-    const regexText = replacement.wholeWord ? `\\b${escapedFindText}\\b` : escapedFindText;
-    const regexp = new RegExp(regexText, flags);
+    const regexp = regexFromReplacement(replacement);
     let replaceCount = 0;
     const result = content.replace(regexp, (match, index) => {
         if (verbose) {
@@ -38,4 +34,13 @@ export function applyReplacement(
         replaceCount,
         result
     };
+}
+
+function regexFromReplacement(replacement: Replacement): RegExp {
+    const ignoreCaseFlag = replacement.ignoreCase ? 'i' : '';
+    const flags = `g${ignoreCaseFlag}`;
+    const escapedFindText = escapeStringRegexp(replacement.find);
+    const regexText = replacement.wholeWord ? `\\b${escapedFindText}\\b` : escapedFindText;
+    const regexp = new RegExp(regexText, flags);
+    return regexp;
 }
