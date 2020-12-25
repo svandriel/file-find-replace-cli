@@ -1,8 +1,7 @@
 import chalk from 'chalk';
-import escapeStringRegexp from 'escape-string-regexp';
 
 import { computeLineOffsets, findOffset } from './line-offsets';
-import { Replacement } from './replacement';
+import { regexFromReplacement, Replacement } from './replacement';
 
 export interface ApplyReplacementOptions {
     file: string;
@@ -34,13 +33,4 @@ export function applyReplacement(
         replaceCount,
         result
     };
-}
-
-function regexFromReplacement(replacement: Replacement): RegExp {
-    const ignoreCaseFlag = replacement.ignoreCase ? 'i' : '';
-    const flags = `g${ignoreCaseFlag}`;
-    const escapedFindText = escapeStringRegexp(replacement.find);
-    const regexText = replacement.wholeWord ? `\\b${escapedFindText}\\b` : escapedFindText;
-    const regexp = new RegExp(regexText, flags);
-    return regexp;
 }

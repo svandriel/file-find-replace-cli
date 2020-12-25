@@ -1,4 +1,5 @@
 import chalk from 'chalk';
+import escapeStringRegexp from 'escape-string-regexp';
 
 export interface Replacement {
     find: string;
@@ -18,6 +19,9 @@ export function parseReplacements(input: any): Replacement[] {
 }
 
 function parseEntry(entry: any): Replacement {
+    if (!entry) {
+        throw new Error(`Expected entry ot be non-falsy, found '${entry}'`);
+    }
     if (typeof entry !== 'object') {
         throw new Error(`Expected entry to be object, found ${typeof entry}`);
     }
@@ -49,4 +53,13 @@ export function replacementToString(item: Replacement): string {
     return `${chalk.bold(item.find)} => ${chalk.bold(item.replace)}${item.wholeWord ? chalk.gray(' [wholeWord]') : ''}${
         item.ignoreCase ? chalk.gray(' [ignoreCase]') : ''
     }`;
+}
+
+export function regexFromReplacement(replacement: Replacement): RegExp {
+    const ignoreCaseFlag = replacement.ignoreCase ? 'i' : '';
+    const flags = `g${ignoreCaseFlag}`;
+    const escapedFindText = escapeStringRegexp(replacement.find);
+    const regexText = replacement.wholeWord ? `\\b${escapedFindText}\\b` : escapedFindText;
+    const regexp = new RegExp(regexText, flags);
+    return regexp;
 }
